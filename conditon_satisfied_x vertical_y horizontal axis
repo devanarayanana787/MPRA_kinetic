@@ -78,7 +78,7 @@ while True:
 
                 # Convert midpoint coordinates from pixels to centimeters
                 midpoint_x_cm = (origin_y - midpoint_y) * conversion_factor
-                midpoint_y_cm = (midpoint_x - origin_x) * conversion_factor
+                midpoint_y_cm = -(midpoint_x - origin_x) * conversion_factor  # Invert the sign of y-coordinate
 
                 # Draw line from midpoint to origin (adjusted)
                 cv2.line(img, (midpoint_x, midpoint_y), (origin_x, origin_y), (255, 255, 0), 2)
@@ -96,7 +96,7 @@ while True:
 
     # Label axes
     cv2.putText(img, 'X', (origin_x + 10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-    cv2.putText(img, 'Y', (width - 20, origin_y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+    cv2.putText(img, 'Y', (10, origin_y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
     # Display the image
     cv2.imshow('Webcam', img)
