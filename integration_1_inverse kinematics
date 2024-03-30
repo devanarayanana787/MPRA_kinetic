@@ -1,0 +1,110 @@
+import numpy as np
+import pyfirmata
+import time
+
+# Connect to Arduino
+board = pyfirmata.Arduino('COM5')  # Change port as necessary
+servo_pin_1 = 9
+servo_pin_2 = 10
+servo_pin_3 = 11
+
+it = pyfirmata.util.Iterator(board)
+it.start()
+
+board.digital[servo_pin_1].mode = pyfirmata.SERVO
+time.sleep(2)
+board.digital[servo_pin_2].mode = pyfirmata.SERVO
+time.sleep(2)
+board.digital[servo_pin_3].mode = pyfirmata.SERVO
+time.sleep(2)
+
+# Function to move servo to a specific angle
+def move_servo(pin, angle):
+    board.digital[pin].write(angle)
+
+# Target end effector point
+x = 20
+y = 20
+z = 30
+
+# Length of the links
+a_1 = 20
+a_2 = 20
+a_3 = 10
+
+# Calculate servo angles
+theta_1 = np.degrees(np.arctan2(y, x))
+r_1 = np.sqrt(x**2 + y**2)
+r_2 = z - a_1
+phi_2 = np.arctan2(r_2, r_1)
+numerator = a_3**2 - a_2**2 - r_1**2 - r_2**2
+denominator = -2 * a_2 * np.sqrt(r_1**2 + r_2**2)
+phi_1 = np.arccos(np.clip(numerator / denominator, -1, 1))
+theta_2 = np.degrees(phi_1 - phi_2)
+numerator = r_1**2 + r_2**2 - a_2**2 - a_3**2
+denominator = -2 * a_2 * a_3
+phi_3 = np.arccos(np.clip(numerator / denominator, -1, 1))
+theta_3 = np.degrees(np.pi - phi_3)
+
+print("Theta_1:", theta_1)
+print("Theta_2:", theta_2)
+print("Theta_3:", theta_3)
+
+# Adjust for servo initial position and direction
+initial_angle = 90
+target_angle = int(initial_angle + theta_1)
+step = 2  # Adjust for smoother motion
+
+# Move servo 1 to target angle if it's different from initial angle
+if target_angle > initial_angle:
+    for angle in range(initial_angle, int(target_angle), step):
+        move_servo(servo_pin_1, angle)
+        time.sleep(0.02)  # Adjust delay for speed control
+elif target_angle < initial_angle:
+    for angle in range(initial_angle, int(target_angle), -step):
+        move_servo(servo_pin_1, angle)
+        time.sleep(0.02)  # Adjust delay for speed control
+else:  # If target angle is equal to initial angle
+    move_servo(servo_pin_1, initial_angle)
+
+time.sleep(2)
+
+
+initial_angle_1 = 50
+target_angle_1 = int(initial_angle_1 + theta_2)
+step = 2  # Adjust for smoother motion
+
+# Move servo 2 to target angle if it's different from initial angle
+if target_angle_1 > initial_angle_1:
+    for angle in range(initial_angle_1, int(target_angle_1), step):
+        move_servo(servo_pin_2, angle)
+        time.sleep(0.02)  # Adjust delay for speed control
+elif target_angle_1 < initial_angle_1:
+    for angle in range(initial_angle_1, int(target_angle_1), -step):
+        move_servo(servo_pin_2, angle)
+        time.sleep(0.02)  # Adjust delay for speed control
+else:  # If target angle is equal to initial angle
+    move_servo(servo_pin_2, initial_angle_1)
+
+time.sleep(2)
+
+initial_angle_2 = 45
+target_angle_2 = int(initial_angle_2 + theta_3)
+step = 2  # Adjust for smoother motion
+
+# Move servo 3 to target angle if it's different from initial angle
+if target_angle_2 > initial_angle_2:
+    for angle in range(initial_angle_2, int(target_angle_2), step):
+        move_servo(servo_pin_3, angle)
+        time.sleep(0.02)  # Adjust delay for speed control
+elif target_angle_2 < initial_angle_2:
+    for angle in range(initial_angle_2, int(target_angle_2), -step):
+        move_servo(servo_pin_3, angle)
+        time.sleep(0.02)  # Adjust delay for speed control
+else:  # If target angle is equal to initial angle
+    move_servo(servo_pin_3, initial_angle_2)
+
+time.sleep(2)
+
+
+board.exit()
