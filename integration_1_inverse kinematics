@@ -12,11 +12,11 @@ it = pyfirmata.util.Iterator(board)
 it.start()
 
 board.digital[servo_pin_1].mode = pyfirmata.SERVO
-time.sleep(2)
+
 board.digital[servo_pin_2].mode = pyfirmata.SERVO
-time.sleep(2)
+
 board.digital[servo_pin_3].mode = pyfirmata.SERVO
-time.sleep(2)
+
 
 # Function to move servo to a specific angle
 def move_servo(pin, angle):
@@ -67,7 +67,7 @@ elif target_angle < initial_angle:
 else:  # If target angle is equal to initial angle
     move_servo(servo_pin_1, initial_angle)
 
-time.sleep(2)
+
 
 
 initial_angle_1 = 50
@@ -86,7 +86,7 @@ elif target_angle_1 < initial_angle_1:
 else:  # If target angle is equal to initial angle
     move_servo(servo_pin_2, initial_angle_1)
 
-time.sleep(2)
+
 
 initial_angle_2 = 45
 target_angle_2 = int(initial_angle_2 + theta_3)
@@ -104,7 +104,7 @@ elif target_angle_2 < initial_angle_2:
 else:  # If target angle is equal to initial angle
     move_servo(servo_pin_3, initial_angle_2)
 
-time.sleep(2)
+
 
 
 board.exit()
